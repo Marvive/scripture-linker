@@ -34,6 +34,20 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
 
         containerEl.createEl('br');
 
+        // Ribbon icon toggle
+        new Setting(containerEl)
+            .setName('Show ribbon icon')
+            .setDesc('Toggle the ribbon icon on or off')
+            .addToggle(toggle => {
+                toggle
+                    .setValue(this.plugin.settings.showRibbonIcon)
+                    .onChange(async (value) => {
+                        this.plugin.settings.showRibbonIcon = value;
+                        await this.plugin.saveSettings();
+                        this.plugin.refreshRibbonIcon();
+                    });
+            });
+
         // Translation dropdown
         const translationSetting = new Setting(containerEl)
             .setName('Default translation')

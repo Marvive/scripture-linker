@@ -6,14 +6,13 @@ import { generateMarkdownLink, generateBothLinks } from './urlGenerators';
 
 export default class ScriptureLinkerPlugin extends Plugin {
     settings: ScriptureLinkerSettings;
+    private ribbonIconEl: HTMLElement | null = null;
 
     async onload() {
         await this.loadSettings();
 
-        // Add ribbon icon for quick file scanning
-        this.addRibbonIcon('book-open', 'Scan file for Bible references', () => {
-            this.scanActiveFile();
-        });
+        // Initialize ribbon icon based on settings
+        this.refreshRibbonIcon();
 
         // Command: Scan entire file
         this.addCommand({
@@ -47,6 +46,24 @@ export default class ScriptureLinkerPlugin extends Plugin {
 
     async saveSettings() {
         await this.saveData(this.settings);
+    }
+
+    /**
+     * Refresh the ribbon icon visibility based on settings
+     */
+    refreshRibbonIcon() {
+        if (this.settings.showRibbonIcon) {
+            if (!this.ribbonIconEl) {
+                this.ribbonIconEl = this.addRibbonIcon('book-open', 'Scan file for Bible references', () => {
+                    this.scanActiveFile();
+                });
+            }
+        } else {
+            if (this.ribbonIconEl) {
+                this.ribbonIconEl.remove();
+                this.ribbonIconEl = null;
+            }
+        }
     }
 
     /**

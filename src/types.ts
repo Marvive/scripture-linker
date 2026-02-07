@@ -40,6 +40,8 @@ export interface ScriptureLinkerSettings {
     linkService: LinkService;
     /** Whether to show both Logos and Bolls links when 'both' is selected */
     showBothLinks: boolean;
+    /** Whether to show the ribbon icon */
+    showRibbonIcon: boolean;
 }
 
 /**
@@ -48,6 +50,7 @@ export interface ScriptureLinkerSettings {
 export interface IScriptureLinkerPlugin extends Plugin {
     settings: ScriptureLinkerSettings;
     saveSettings(): Promise<void>;
+    refreshRibbonIcon(): void;
 }
 
 /**
@@ -57,6 +60,7 @@ export const DEFAULT_SETTINGS: ScriptureLinkerSettings = {
     defaultTranslation: 'ESV',
     linkService: 'logos',
     showBothLinks: false,
+    showRibbonIcon: true,
 };
 
 /**

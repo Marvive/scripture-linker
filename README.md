@@ -40,6 +40,7 @@ Click the 📖 book icon in the left ribbon for quick file scanning.
 
 - **Default Translation**: Choose your preferred Bible translation
 - **Link Service**: Select Logos, Bolls Bible, or both
+- **Show ribbon icon**: Toggle the ribbon icon on or off in the left sidebar
 
 ## URL Formats
 
