@@ -3,7 +3,7 @@
 	"name": "Scripture Linker",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Scan notes for Bible references and link them to Logos Bible Software and Bolls Bible",
+	"description": "Scan notes for Bible references and link them to Logos Bible Software and Bolls Bible.",
 	"author": "Michael Marvive",
 	"authorUrl": "https://github.com/michaelmarvive",
 	"isDesktopOnly": false
