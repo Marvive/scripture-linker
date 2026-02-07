@@ -82,16 +82,10 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
 
         containerEl.createEl('br');
 
-        // Support section
-        const supportEl = containerEl.createDiv({ cls: 'setting-item' });
-        supportEl.style.display = 'flex';
-        supportEl.style.justifyContent = 'center';
-        supportEl.style.alignItems = 'center';
-        supportEl.style.gap = '10px';
-        supportEl.style.padding = '20px 0';
-        supportEl.style.borderTop = 'none';
-
-        const sponsorBtn = supportEl.createEl('button');
+        // Sponsor button
+        const sponsorDiv = containerEl.createDiv();
+        sponsorDiv.style.marginBottom = '10px';
+        const sponsorBtn = sponsorDiv.createEl('button');
         sponsorBtn.style.display = 'flex';
         sponsorBtn.style.alignItems = 'center';
         sponsorBtn.style.gap = '5px';
@@ -101,7 +95,9 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
         sponsorBtn.createSpan({ text: 'Sponsor' });
         sponsorBtn.onclick = () => window.open('https://github.com/sponsors/Marvive', '_blank');
 
-        const issuesBtn = supportEl.createEl('button', { text: 'Report issue or feature request' });
+        // Issues button
+        const issuesDiv = containerEl.createDiv();
+        const issuesBtn = issuesDiv.createEl('button', { text: 'Report issue or feature request' });
         issuesBtn.onclick = () => window.open('https://github.com/Marvive/scripture-linker/issues', '_blank');
     }
 
