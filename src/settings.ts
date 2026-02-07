@@ -15,7 +15,7 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
 
         // Information section (moved above settings)
         containerEl.createEl('p', {
-            text: 'Scripture Linker scans your notes for bible references and converts them into clickable links for Logos and Bolls bible.',
+            text: 'Scripture linker scans your notes for bible references and converts them into clickable links for Logos and Bolls bible.',
             cls: 'setting-item-description'
         });
 
@@ -79,6 +79,22 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
                         this.display();
                     });
             });
+
+        containerEl.createEl('br');
+
+        // Support section
+        const supportEl = containerEl.createDiv({ cls: 'setting-item' });
+        supportEl.style.display = 'flex';
+        supportEl.style.justifyContent = 'flex-start';
+        supportEl.style.gap = '10px';
+        supportEl.style.paddingLeft = '0';
+        supportEl.style.borderTop = 'none';
+
+        const sponsorBtn = supportEl.createEl('button', { text: 'Sponsor' });
+        sponsorBtn.onclick = () => window.open('https://github.com/sponsors/Marvive', '_blank');
+
+        const issuesBtn = supportEl.createEl('button', { text: 'Report an issue' });
+        issuesBtn.onclick = () => window.open('https://github.com/Marvive/scripture-linker/issues', '_blank');
     }
 
     private updateTranslationDropdown(setting: Setting): void {
