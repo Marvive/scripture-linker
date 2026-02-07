@@ -69,8 +69,38 @@ export function findAllReferences(text: string): BibleReference[] {
         const beforeMatch = text.substring(0, match.index);
         const afterMatch = text.substring(match.index + match[0].length);
 
-        if (isInsideMarkdownLink(beforeMatch, afterMatch)) {
-            continue;
+        // Check if this reference is already part of a plugin-managed link structure
+        let startIndex = match.index;
+        let endIndex = match.index + match[0].length;
+
+        // 1. Check for single link: [Reference](URL)
+        const linkMatchBefore = beforeMatch.match(/\[$/);
+        const linkMatchAfter = afterMatch.match(/^\]\(([^)]+)\)/);
+
+        if (linkMatchBefore && linkMatchAfter) {
+            const url = linkMatchAfter[1];
+            if (isPluginManagedUrl(url)) {
+                startIndex -= 1; // Include '['
+                endIndex += linkMatchAfter[0].length; // Include '](URL)'
+            }
+        }
+        // 2. Check for "Both" structure: Reference ([Logos](URL) | [Bolls](URL))
+        else {
+            const bothMatchAfter = afterMatch.match(/^ \(\[Logos\]\(([^)]+)\) \| \[Bolls\]\(([^)]+)\)\)/);
+            if (bothMatchAfter) {
+                const logosUrl = bothMatchAfter[1];
+                const bollsUrl = bothMatchAfter[2];
+                if (isPluginManagedUrl(logosUrl) || isPluginManagedUrl(bollsUrl)) {
+                    endIndex += bothMatchAfter[0].length;
+                }
+            }
+        }
+
+        // If not expanded, check if we're inside a generic markdown link (to skip)
+        if (startIndex === match.index && endIndex === match.index + match[0].length) {
+            if (isInsideMarkdownLink(beforeMatch, afterMatch)) {
+                continue;
+            }
         }
 
         references.push({
@@ -79,12 +109,19 @@ export function findAllReferences(text: string): BibleReference[] {
             verseStart,
             verseEnd,
             rawText,
-            startIndex: match.index,
-            endIndex: match.index + match[0].length,
+            startIndex,
+            endIndex,
         });
     }
 
     return references;
+}
+
+/**
+ * Check if a URL is managed by the Scripture Linker plugin
+ */
+function isPluginManagedUrl(url: string): boolean {
+    return url.includes('ref.ly/') || url.includes('bolls.life/');
 }
 
 /**

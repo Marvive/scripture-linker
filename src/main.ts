@@ -125,8 +125,9 @@ export default class ScriptureLinkerPlugin extends Plugin {
                 );
             }
 
-            // Only replace if we got a valid link
-            if (replacement !== ref.rawText) {
+            // Only replace if the replacement is different from the current text
+            const currentTextAtRange = text.substring(ref.startIndex, ref.endIndex);
+            if (replacement !== currentTextAtRange) {
                 processedText =
                     processedText.substring(0, ref.startIndex) +
                     replacement +

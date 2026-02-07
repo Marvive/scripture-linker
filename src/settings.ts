@@ -13,12 +13,9 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
         const { containerEl } = this;
         containerEl.empty();
 
-        containerEl.createEl('h2', { text: 'Scripture Linker Settings' });
-
         // Information section (moved above settings)
-        containerEl.createEl('h3', { text: 'About' });
         containerEl.createEl('p', {
-            text: 'Scripture Linker scans your notes for Bible references and converts them into clickable links for Logos and Bolls Bible.',
+            text: 'Scripture Linker scans your notes for bible references and converts them into clickable links for Logos and Bolls bible.',
             cls: 'setting-item-description'
         });
 
@@ -29,8 +26,8 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
         });
 
         const listEl = containerEl.createEl('ul', { cls: 'setting-item-description', attr: { style: 'margin-top: 0;' } });
-        listEl.createEl('li', { text: 'Scan file for Bible references' });
-        listEl.createEl('li', { text: 'Scan selection for Bible references' });
+        listEl.createEl('li', { text: 'Scan file for bible references' });
+        listEl.createEl('li', { text: 'Scan selection for bible references' });
 
         containerEl.createEl('br');
 
@@ -51,18 +48,18 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
         // Translation dropdown
         const translationSetting = new Setting(containerEl)
             .setName('Default translation')
-            .setDesc('Select the default Bible translation for generated links');
+            .setDesc('Select the default bible translation for generated links');
 
         this.updateTranslationDropdown(translationSetting);
 
         // Link service selection
         new Setting(containerEl)
             .setName('Link service')
-            .setDesc('Choose which Bible service to link to')
+            .setDesc('Choose which bible service to link to')
             .addDropdown(dropdown => {
                 dropdown
-                    .addOption('logos', 'Logos Bible Software (ref.ly)')
-                    .addOption('bolls', 'Bolls Bible')
+                    .addOption('logos', 'Logos bible software (ref.ly)')
+                    .addOption('bolls', 'Bolls bible')
                     .addOption('both', 'Both (shows two links)')
                     .setValue(this.plugin.settings.linkService)
                     .onChange(async (value) => {
@@ -90,14 +87,14 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
         setting.clear();
         setting.addDropdown(dropdown => {
             const translations: Array<{ id: Translation, name: string }> = [
-                { id: 'ESV', name: 'ESV (English Standard Version)' },
-                { id: 'NASB95', name: 'NASB95 (New American Standard 1995)' },
-                { id: 'NIV', name: 'NIV (New International Version 2011)' },
-                { id: 'KJV', name: 'KJV (King James Version)' },
-                { id: 'NKJV', name: 'NKJV (New King James Version)' },
-                { id: 'MSG', name: 'MSG (The Message)' },
-                { id: 'LSB', name: 'LSB (Legacy Standard Bible)' },
-                { id: 'LEB', name: 'LEB (Lexham English Bible)' },
+                { id: 'ESV', name: 'ESV (English standard version)' },
+                { id: 'NASB95', name: 'NASB95 (New American standard 1995)' },
+                { id: 'NIV', name: 'NIV (New international version 2011)' },
+                { id: 'KJV', name: 'KJV (King James version)' },
+                { id: 'NKJV', name: 'NKJV (New King James version)' },
+                { id: 'MSG', name: 'MSG (The message)' },
+                { id: 'LSB', name: 'LSB (Legacy standard bible)' },
+                { id: 'LEB', name: 'LEB (Lexham English bible)' },
             ];
 
             for (const trans of translations) {
