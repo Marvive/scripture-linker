@@ -1,3 +1,5 @@
+import { Plugin } from 'obsidian';
+
 /**
  * Represents a parsed Bible reference
  */
@@ -38,6 +40,14 @@ export interface ScriptureLinkerSettings {
     linkService: LinkService;
     /** Whether to show both Logos and Bolls links when 'both' is selected */
     showBothLinks: boolean;
+}
+
+/**
+ * Interface for the plugin to break circular dependencies
+ */
+export interface IScriptureLinkerPlugin extends Plugin {
+    settings: ScriptureLinkerSettings;
+    saveSettings(): Promise<void>;
 }
 
 /**

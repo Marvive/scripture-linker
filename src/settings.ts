@@ -1,11 +1,10 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
-import type ScriptureLinkerPlugin from './main';
-import { Translation, LinkService, TRANSLATION_CONFIG } from './types';
+import { Translation, LinkService, TRANSLATION_CONFIG, IScriptureLinkerPlugin } from './types';
 
 export class ScriptureLinkerSettingTab extends PluginSettingTab {
-    plugin: ScriptureLinkerPlugin;
+    plugin: IScriptureLinkerPlugin;
 
-    constructor(app: App, plugin: ScriptureLinkerPlugin) {
+    constructor(app: App, plugin: IScriptureLinkerPlugin) {
         super(app, plugin);
         this.plugin = plugin;
     }
@@ -15,6 +14,25 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
         containerEl.empty();
 
         containerEl.createEl('h2', { text: 'Scripture Linker Settings' });
+
+        // Information section (moved above settings)
+        containerEl.createEl('h3', { text: 'About' });
+        containerEl.createEl('p', {
+            text: 'Scripture Linker scans your notes for Bible references and converts them into clickable links for Logos and Bolls Bible.',
+            cls: 'setting-item-description'
+        });
+
+        containerEl.createEl('p', {
+            text: 'You can use the ribbon icon or the following commands to scan your notes:',
+            cls: 'setting-item-description',
+            attr: { style: 'margin-bottom: 5px;' }
+        });
+
+        const listEl = containerEl.createEl('ul', { cls: 'setting-item-description', attr: { style: 'margin-top: 0;' } });
+        listEl.createEl('li', { text: 'Scan file for Bible references' });
+        listEl.createEl('li', { text: 'Scan selection for Bible references' });
+
+        containerEl.createEl('br');
 
         // Translation dropdown
         const translationSetting = new Setting(containerEl)
@@ -38,7 +56,7 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
 
                         // If switching to Bolls and current translation isn't supported, 
                         // reset to a supported one (ESV)
-                        const currentTrans = this.plugin.settings.defaultTranslation;
+                        const currentTrans = this.plugin.settings.defaultTranslation as Translation;
                         const isBolls = value === 'bolls' || value === 'both';
                         if (isBolls && !TRANSLATION_CONFIG[currentTrans].supportsBolls) {
                             this.plugin.settings.defaultTranslation = 'ESV';
@@ -50,18 +68,6 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
                         this.display();
                     });
             });
-
-        // Information section
-        containerEl.createEl('h3', { text: 'About' });
-        containerEl.createEl('p', {
-            text: 'Scripture Linker scans your notes for Bible references and converts them to clickable links.',
-            cls: 'setting-item-description'
-        });
-
-        containerEl.createEl('p', {
-            text: 'Use the ribbon icon or commands to scan the current file or selected text.',
-            cls: 'setting-item-description'
-        });
     }
 
     private updateTranslationDropdown(setting: Setting): void {
