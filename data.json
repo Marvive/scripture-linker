@@ -1,5 +1,6 @@
 {
-  "defaultTranslation": "KJV",
-  "linkService": "bolls",
-  "showBothLinks": false
+  "defaultTranslation": "ESV",
+  "linkService": "logos",
+  "showBothLinks": false,
+  "showRibbonIcon": true
 }
