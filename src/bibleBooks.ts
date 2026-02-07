@@ -87,23 +87,50 @@ export const BIBLE_BOOKS: BibleBook[] = [
     { name: 'Revelation', osis: 'Re', bollsId: 66, abbreviations: ['revelation', 'revelations', 'rev', 're', 'rv', 'apocalypse'] },
 ];
 
+// ============================================================================
+// Performance Optimization: Caching
+// ============================================================================
+
+/** Cached abbreviation lookup map for O(1) book lookups */
+let abbreviationMap: Map<string, BibleBook> | null = null;
+
+/** Cached book pattern for regex matching */
+let cachedBookPattern: string | null = null;
+
+/**
+ * Build the abbreviation lookup map (computed once, cached)
+ */
+function getAbbreviationMap(): Map<string, BibleBook> {
+    if (abbreviationMap) return abbreviationMap;
+
+    abbreviationMap = new Map();
+    for (const book of BIBLE_BOOKS) {
+        for (const abbrev of book.abbreviations) {
+            abbreviationMap.set(abbrev, book);
+        }
+    }
+    return abbreviationMap;
+}
+
 /**
  * Find a Bible book by name or abbreviation
+ * Uses cached lookup map for O(1) performance
  * @param input The book name or abbreviation to search for
  * @returns The matching BibleBook or undefined
  */
 export function findBook(input: string): BibleBook | undefined {
     const normalized = input.toLowerCase().replace(/\./g, '').trim();
-    return BIBLE_BOOKS.find(book =>
-        book.abbreviations.includes(normalized)
-    );
+    return getAbbreviationMap().get(normalized);
 }
 
 /**
  * Build a regex pattern that matches all book names and abbreviations
- * This creates a pattern like: (Genesis|Gen|Ge|Gn|Exodus|Exod|...|1 John|1John|1 Jn|...)
+ * Pattern is cached after first computation
+ * @returns A regex pattern string
  */
 export function buildBookPattern(): string {
+    if (cachedBookPattern) return cachedBookPattern;
+
     const allNames: string[] = [];
 
     for (const book of BIBLE_BOOKS) {
@@ -111,7 +138,6 @@ export function buildBookPattern(): string {
         allNames.push(escapeRegex(book.name));
         // Add all abbreviations
         for (const abbrev of book.abbreviations) {
-            // Handle variations with and without periods (e.g., "Gen" and "Gen.")
             allNames.push(escapeRegex(abbrev));
         }
     }
@@ -120,7 +146,8 @@ export function buildBookPattern(): string {
     // This ensures "1 John" matches before "John"
     allNames.sort((a, b) => b.length - a.length);
 
-    return allNames.join('|');
+    cachedBookPattern = allNames.join('|');
+    return cachedBookPattern;
 }
 
 /**
@@ -129,3 +156,12 @@ export function buildBookPattern(): string {
 function escapeRegex(str: string): string {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
+
+/**
+ * Clear all caches (useful for testing)
+ */
+export function clearCaches(): void {
+    abbreviationMap = null;
+    cachedBookPattern = null;
+}
+

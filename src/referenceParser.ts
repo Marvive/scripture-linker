@@ -1,6 +1,23 @@
 import { BibleReference } from './types';
 import { findBook, buildBookPattern } from './bibleBooks';
 
+/** Cached compiled regex for reference matching */
+let cachedReferenceRegex: RegExp | null = null;
+
+/**
+ * Get the reference regex (cached after first computation)
+ */
+function getReferenceRegex(): RegExp {
+    if (cachedReferenceRegex) return new RegExp(cachedReferenceRegex.source, cachedReferenceRegex.flags);
+
+    const bookPattern = buildBookPattern();
+    const fullRefPattern = `(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-–—](\\d{1,3}))?)?`;
+    const shorthandRefPattern = `(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-–—](\\d{1,3}))?(?:\\))?`;
+
+    cachedReferenceRegex = new RegExp(`${fullRefPattern}|${shorthandRefPattern}`, 'gi');
+    return new RegExp(cachedReferenceRegex.source, cachedReferenceRegex.flags);
+}
+
 /**
  * Parse a text string and find all Bible references
  * @param text The text to search for Bible references
@@ -9,21 +26,8 @@ import { findBook, buildBookPattern } from './bibleBooks';
 export function findAllReferences(text: string): BibleReference[] {
     const references: BibleReference[] = [];
 
-    // Build the comprehensive book pattern
-    const bookPattern = buildBookPattern();
-
-    // Regex to match Bible references:
-    // 1. Full reference: Book name + Chapter + Optional Verse
-    // 2. Shorthand reference: Chapter + Verse (e.g., 10:7)
-
-    // Pattern for full reference (Book Ch:Vs)
-    const fullRefPattern = `(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-–—](\\d{1,3}))?)?`;
-
-    // Pattern for shorthand reference (Ch:Vs) - requires a colon to avoid matching random numbers
-    // Also often wrapped in parentheses: (10:7)
-    const shorthandRefPattern = `(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-–—](\\d{1,3}))?(?:\\))?`;
-
-    const combinedRegex = new RegExp(`${fullRefPattern}|${shorthandRefPattern}`, 'gi');
+    // Use cached regex for performance
+    const combinedRegex = getReferenceRegex();
 
     let match;
     let lastBookName: string | null = null;
