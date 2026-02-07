@@ -111,14 +111,14 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
         setting.clear();
         setting.addDropdown(dropdown => {
             const translations: Array<{ id: Translation, name: string }> = [
-                { id: 'ESV', name: 'ESV (English standard version)' },
-                { id: 'NASB95', name: 'NASB95 (New American standard 1995)' },
-                { id: 'NIV', name: 'NIV (New international version 2011)' },
-                { id: 'KJV', name: 'KJV (King James version)' },
-                { id: 'NKJV', name: 'NKJV (New King James version)' },
-                { id: 'MSG', name: 'MSG (The message)' },
-                { id: 'LSB', name: 'LSB (Legacy standard bible)' },
-                { id: 'LEB', name: 'LEB (Lexham English bible)' },
+                { id: 'ESV', name: 'ESV' },
+                { id: 'NASB95', name: 'NASB95' },
+                { id: 'NIV', name: 'NIV' },
+                { id: 'KJV', name: 'KJV1900' },
+                { id: 'NKJV', name: 'NKJV' },
+                { id: 'MSG', name: 'MSG' },
+                { id: 'LSB', name: 'LSB' },
+                { id: 'LEB', name: 'LEB' },
             ];
 
             for (const trans of translations) {
