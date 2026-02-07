@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
+import { App, PluginSettingTab, Setting, setIcon } from 'obsidian';
 import { Translation, LinkService, TRANSLATION_CONFIG, IScriptureLinkerPlugin } from './types';
 
 export class ScriptureLinkerSettingTab extends PluginSettingTab {
@@ -15,7 +15,7 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
 
         // Information section (moved above settings)
         containerEl.createEl('p', {
-            text: 'Scripture linker scans your notes for bible references and converts them into clickable links for Logos and Bolls bible.',
+            text: 'Scripture linker scans your notes for bible references and converts them into clickable links for logos and bolls bible.',
             cls: 'setting-item-description'
         });
 
@@ -86,14 +86,22 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
         const supportEl = containerEl.createDiv({ cls: 'setting-item' });
         supportEl.style.display = 'flex';
         supportEl.style.justifyContent = 'flex-start';
+        supportEl.style.alignItems = 'center';
         supportEl.style.gap = '10px';
         supportEl.style.paddingLeft = '0';
         supportEl.style.borderTop = 'none';
 
-        const sponsorBtn = supportEl.createEl('button', { text: 'Sponsor' });
+        const sponsorBtn = supportEl.createEl('button');
+        sponsorBtn.style.display = 'flex';
+        sponsorBtn.style.alignItems = 'center';
+        sponsorBtn.style.gap = '5px';
+        setIcon(sponsorBtn, 'heart');
+        const heartIcon = sponsorBtn.querySelector('svg');
+        if (heartIcon) heartIcon.style.color = '#db61a2';
+        sponsorBtn.createSpan({ text: 'Sponsor' });
         sponsorBtn.onclick = () => window.open('https://github.com/sponsors/Marvive', '_blank');
 
-        const issuesBtn = supportEl.createEl('button', { text: 'Report an issue' });
+        const issuesBtn = supportEl.createEl('button', { text: 'Report issue or feature request' });
         issuesBtn.onclick = () => window.open('https://github.com/Marvive/scripture-linker/issues', '_blank');
     }
 
