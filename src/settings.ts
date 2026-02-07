@@ -85,10 +85,10 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
         // Support section
         const supportEl = containerEl.createDiv({ cls: 'setting-item' });
         supportEl.style.display = 'flex';
-        supportEl.style.justifyContent = 'flex-start';
+        supportEl.style.justifyContent = 'center';
         supportEl.style.alignItems = 'center';
         supportEl.style.gap = '10px';
-        supportEl.style.paddingLeft = '0';
+        supportEl.style.padding = '20px 0';
         supportEl.style.borderTop = 'none';
 
         const sponsorBtn = supportEl.createEl('button');
