@@ -17,7 +17,7 @@ export default class ScriptureLinkerPlugin extends Plugin {
         // Command: Scan entire file
         this.addCommand({
             id: 'scan-file',
-            name: 'Scan file for Bible references',
+            name: 'Scan file for bible references',
             editorCallback: (editor: Editor) => {
                 this.scanEditor(editor, false);
             },
@@ -26,7 +26,7 @@ export default class ScriptureLinkerPlugin extends Plugin {
         // Command: Scan selected text only
         this.addCommand({
             id: 'scan-selection',
-            name: 'Scan selection for Bible references',
+            name: 'Scan selection for bible references',
             editorCallback: (editor: Editor) => {
                 this.scanEditor(editor, true);
             },
@@ -54,7 +54,7 @@ export default class ScriptureLinkerPlugin extends Plugin {
     refreshRibbonIcon() {
         if (this.settings.showRibbonIcon) {
             if (!this.ribbonIconEl) {
-                this.ribbonIconEl = this.addRibbonIcon('book-open', 'Scan file for Bible references', () => {
+                this.ribbonIconEl = this.addRibbonIcon('church', 'Scan file for bible references', () => {
                     this.scanActiveFile();
                 });
             }
