@@ -1,7 +1,4 @@
 node_modules/
 dist/
-main.js
-manifest.json
-styles.css
 .DS_Store
 *.log

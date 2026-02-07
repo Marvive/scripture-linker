@@ -1,0 +1,11 @@
+/* Scripture Linker Plugin Styles */
+
+/* Settings tab styling */
+.scripture-linker-settings h2 {
+	margin-bottom: 1em;
+}
+
+.scripture-linker-settings h3 {
+	margin-top: 1.5em;
+	margin-bottom: 0.5em;
+}
