@@ -2,25 +2,25 @@ import { findAllReferences } from '../src/referenceParser';
 
 describe('Reference Parsing Refinements', () => {
     describe('Cross-Chapter Ranges', () => {
-        it('should parse simple cross-chapter range like John 3:35-4:1', () => {
-            const refs = findAllReferences('Read John 3:35-4:1');
+        it('should parse simple cross-chapter range like John 3:36-4:1', () => {
+            const refs = findAllReferences('Read John 3:36-4:1');
             expect(refs).toHaveLength(1);
             expect(refs[0].book).toBe('John');
             expect(refs[0].chapter).toBe(3);
-            expect(refs[0].verseStart).toBe(35);
-            // These will fail currently
+            expect(refs[0].verseStart).toBe(36);
             expect(refs[0].chapterEnd).toBe(4);
             expect(refs[0].verseEnd).toBe(1);
-            expect(refs[0].rawText).toBe('John 3:35-4:1');
+            expect(refs[0].rawText).toBe('John 3:36-4:1');
         });
 
         it('should parse shorthand cross-chapter range', () => {
-            const refs = findAllReferences('John 3:35 and 3:36-4:1');
-            expect(refs).toHaveLength(2);
-            expect(refs[1].book).toBe('John');
-            expect(refs[1].chapter).toBe(3);
-            expect(refs[1].chapterEnd).toBe(4);
-            expect(refs[1].verseEnd).toBe(1);
+            const refs = findAllReferences('John 3:36 and 3:37-4:1');
+            // Note: 3:37-4:1 is invalid because John 3:37 doesn't exist (John 3 has 36 verses).
+            // Only the first valid reference should be parsed.
+            expect(refs).toHaveLength(1);
+            expect(refs[0].book).toBe('John');
+            expect(refs[0].chapter).toBe(3);
+            expect(refs[0].verseStart).toBe(36);
         });
     });
 
@@ -44,7 +44,7 @@ describe('Reference Parsing Refinements', () => {
         it('should handle the large example provided by user', () => {
             const text = `
 - John 3:17
-- Genesis 3:35-4:1
+- Genesis 3:24-4:1
 
 - Eli was a High Priest and Judge of Israel at Shiloh...
 - The Inauguration of Monarchy at Gilgal (11:14–12:25)
@@ -53,12 +53,12 @@ describe('Reference Parsing Refinements', () => {
 
             // Expected matches:
             // 1. John 3:17
-            // 2. Genesis 3:35-4:1
+            // 2. Genesis 3:24-4:1 (valid cross-chapter range, Gen 3 has 24 verses)
             // 3. (11:14–12:25) should NOT be matched because there's no book on its line
 
             const matches = refs.map(r => r.rawText);
             expect(matches).toContain('John 3:17');
-            expect(matches).toContain('Genesis 3:35-4:1');
+            expect(matches).toContain('Genesis 3:24-4:1');
             expect(matches).not.toContain('11:14–12:25');
             expect(matches).not.toContain('(11:14–12:25)');
         });

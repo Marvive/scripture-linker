@@ -1,5 +1,5 @@
 import { BibleReference } from './types';
-import { findBook, buildBookPattern } from './bibleBooks';
+import { findBook, buildBookPattern, isValidReference } from './bibleBooks';
 
 /** Cached compiled regex for reference matching */
 let cachedReferenceRegex: RegExp | null = null;
@@ -91,6 +91,12 @@ export function findAllReferences(text: string): BibleReference[] {
                 // Single verse or single-chapter range shorthand: 3:35-45
                 verseEnd = match[8] ? parseInt(match[8], 10) : undefined;
             }
+        }
+
+        // Validate the reference before proceeding
+        if (!isValidReference(bookName, chapter, verseStart, chapterEnd, verseEnd)) {
+            lastMatchEndIndex = match.index + match[0].length;
+            continue; // Skip invalid references
         }
 
         // Ensure we don't match inside existing markdown links
