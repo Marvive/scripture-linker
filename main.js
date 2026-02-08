@@ -320,8 +320,8 @@ function getReferenceRegex() {
   if (cachedReferenceRegex)
     return new RegExp(cachedReferenceRegex.source, cachedReferenceRegex.flags);
   const bookPattern = buildBookPattern();
-  const fullRefPattern = `(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-\u2013\u2014](\\d{1,3})(?:[:.](\\d{1,3}))?)?)?`;
-  const shorthandRefPattern = `(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-\u2013\u2014](\\d{1,3})(?:[:.](\\d{1,3}))?)?(?:\\))?`;
+  const fullRefPattern = `\\b(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-\u2013\u2014](\\d{1,3})(?:[:.](\\d{1,3}))?)?)?`;
+  const shorthandRefPattern = `\\b(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-\u2013\u2014](\\d{1,3})(?:[:.](\\d{1,3}))?)?(?:\\))?`;
   cachedReferenceRegex = new RegExp(`${fullRefPattern}|${shorthandRefPattern}`, "gi");
   return new RegExp(cachedReferenceRegex.source, cachedReferenceRegex.flags);
 }

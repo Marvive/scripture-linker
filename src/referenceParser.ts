@@ -12,9 +12,10 @@ function getReferenceRegex(): RegExp {
 
     const bookPattern = buildBookPattern();
     // Full ref: Book 3:35 or Book 3:35-4:1
-    const fullRefPattern = `(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-–—](\\d{1,3})(?:[:.](\\d{1,3}))?)?)?`;
+    // Added \b before the book pattern to prevent matching words like "test" as "est" (Esther)
+    const fullRefPattern = `\\b(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-–—](\\d{1,3})(?:[:.](\\d{1,3}))?)?)?`;
     // Shorthand: 3:35 or 3:35-4:1
-    const shorthandRefPattern = `(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-–—](\\d{1,3})(?:[:.](\\d{1,3}))?)?(?:\\))?`;
+    const shorthandRefPattern = `\\b(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-–—](\\d{1,3})(?:[:.](\\d{1,3}))?)?(?:\\))?`;
 
     cachedReferenceRegex = new RegExp(`${fullRefPattern}|${shorthandRefPattern}`, 'gi');
     return new RegExp(cachedReferenceRegex.source, cachedReferenceRegex.flags);
