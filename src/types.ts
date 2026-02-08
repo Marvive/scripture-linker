@@ -10,6 +10,8 @@ export interface BibleReference {
     chapter: number;
     /** The starting verse number (undefined if whole chapter) */
     verseStart?: number;
+    /** The ending chapter number for ranges (e.g., in "John 3:35-4:1") */
+    chapterEnd?: number;
     /** The ending verse number for ranges (undefined if single verse) */
     verseEnd?: number;
     /** The original text that was matched */

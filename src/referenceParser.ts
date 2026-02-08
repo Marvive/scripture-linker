@@ -11,8 +11,10 @@ function getReferenceRegex(): RegExp {
     if (cachedReferenceRegex) return new RegExp(cachedReferenceRegex.source, cachedReferenceRegex.flags);
 
     const bookPattern = buildBookPattern();
-    const fullRefPattern = `(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-–—](\\d{1,3}))?)?`;
-    const shorthandRefPattern = `(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-–—](\\d{1,3}))?(?:\\))?`;
+    // Full ref: Book 3:35 or Book 3:35-4:1
+    const fullRefPattern = `(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-–—](\\d{1,3})(?:[:.](\\d{1,3}))?)?)?`;
+    // Shorthand: 3:35 or 3:35-4:1
+    const shorthandRefPattern = `(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-–—](\\d{1,3})(?:[:.](\\d{1,3}))?)?(?:\\))?`;
 
     cachedReferenceRegex = new RegExp(`${fullRefPattern}|${shorthandRefPattern}`, 'gi');
     return new RegExp(cachedReferenceRegex.source, cachedReferenceRegex.flags);
@@ -31,38 +33,64 @@ export function findAllReferences(text: string): BibleReference[] {
 
     let match;
     let lastBookName: string | null = null;
+    let lastMatchEndIndex = 0;
 
     while ((match = combinedRegex.exec(text)) !== null) {
+        // Reset lastBookName if there's a newline between matches
+        const textSinceLastMatch = text.substring(lastMatchEndIndex, match.index);
+        if (textSinceLastMatch.includes('\n')) {
+            lastBookName = null;
+        }
+
         const fullBookInput = match[1];
         let bookName: string | null = null;
         let chapter: number;
         let verseStart: number | undefined;
+        let chapterEnd: number | undefined;
         let verseEnd: number | undefined;
         let rawText = match[0];
 
         if (fullBookInput) {
             // This is a full reference
             const book = findBook(fullBookInput);
-            if (!book) continue;
+            if (!book) {
+                lastMatchEndIndex = match.index + match[0].length;
+                continue;
+            }
 
             bookName = book.name;
             lastBookName = bookName; // Update context
 
             chapter = parseInt(match[2], 10);
             verseStart = match[3] ? parseInt(match[3], 10) : undefined;
-            verseEnd = match[4] ? parseInt(match[4], 10) : undefined;
+
+            if (match[5]) {
+                // Cross-chapter range: Book 3:35-4:1
+                chapterEnd = parseInt(match[4], 10);
+                verseEnd = parseInt(match[5], 10);
+            } else {
+                // Single verse or single-chapter range: Book 3:35-45
+                verseEnd = match[4] ? parseInt(match[4], 10) : undefined;
+            }
         } else {
-            // This is a shorthand reference (match[5], match[6], match[7])
-            if (!lastBookName) continue; // No context available
+            // This is a shorthand reference
+            if (!lastBookName) {
+                lastMatchEndIndex = match.index + match[0].length;
+                continue; // No context available on this line
+            }
 
             bookName = lastBookName;
-            chapter = parseInt(match[5], 10);
-            verseStart = parseInt(match[6], 10);
-            verseEnd = match[7] ? parseInt(match[7], 10) : undefined;
+            chapter = parseInt(match[6], 10);
+            verseStart = parseInt(match[7], 10);
 
-            // For shorthand, if it was wrapped in parens, we might want to strip them for rawText
-            // but the regex captures them. If we want rawText to be exactly what's in the document:
-            // rawText is already correctly match[0].
+            if (match[9]) {
+                // Cross-chapter shorthand: 3:35-4:1
+                chapterEnd = parseInt(match[8], 10);
+                verseEnd = parseInt(match[9], 10);
+            } else {
+                // Single verse or single-chapter range shorthand: 3:35-45
+                verseEnd = match[8] ? parseInt(match[8], 10) : undefined;
+            }
         }
 
         // Ensure we don't match inside existing markdown links
@@ -107,11 +135,14 @@ export function findAllReferences(text: string): BibleReference[] {
             book: bookName,
             chapter,
             verseStart,
+            chapterEnd,
             verseEnd,
             rawText,
             startIndex,
             endIndex,
         });
+
+        lastMatchEndIndex = endIndex;
     }
 
     return references;
@@ -181,7 +212,10 @@ export function formatReference(ref: BibleReference): string {
 
     if (ref.verseStart !== undefined) {
         result += `:${ref.verseStart}`;
-        if (ref.verseEnd !== undefined && ref.verseEnd !== ref.verseStart) {
+
+        if (ref.chapterEnd !== undefined) {
+            result += `-${ref.chapterEnd}:${ref.verseEnd}`;
+        } else if (ref.verseEnd !== undefined && ref.verseEnd !== ref.verseStart) {
             result += `-${ref.verseEnd}`;
         }
     }

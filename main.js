@@ -290,8 +290,8 @@ function getReferenceRegex() {
   if (cachedReferenceRegex)
     return new RegExp(cachedReferenceRegex.source, cachedReferenceRegex.flags);
   const bookPattern = buildBookPattern();
-  const fullRefPattern = `(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-\u2013\u2014](\\d{1,3}))?)?`;
-  const shorthandRefPattern = `(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-\u2013\u2014](\\d{1,3}))?(?:\\))?`;
+  const fullRefPattern = `(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-\u2013\u2014](\\d{1,3})(?:[:.](\\d{1,3}))?)?)?`;
+  const shorthandRefPattern = `(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-\u2013\u2014](\\d{1,3})(?:[:.](\\d{1,3}))?)?(?:\\))?`;
   cachedReferenceRegex = new RegExp(`${fullRefPattern}|${shorthandRefPattern}`, "gi");
   return new RegExp(cachedReferenceRegex.source, cachedReferenceRegex.flags);
 }
@@ -300,29 +300,49 @@ function findAllReferences(text) {
   const combinedRegex = getReferenceRegex();
   let match;
   let lastBookName = null;
+  let lastMatchEndIndex = 0;
   while ((match = combinedRegex.exec(text)) !== null) {
+    const textSinceLastMatch = text.substring(lastMatchEndIndex, match.index);
+    if (textSinceLastMatch.includes("\n")) {
+      lastBookName = null;
+    }
     const fullBookInput = match[1];
     let bookName = null;
     let chapter;
     let verseStart;
+    let chapterEnd;
     let verseEnd;
     let rawText = match[0];
     if (fullBookInput) {
       const book = findBook(fullBookInput);
-      if (!book)
+      if (!book) {
+        lastMatchEndIndex = match.index + match[0].length;
         continue;
+      }
       bookName = book.name;
       lastBookName = bookName;
       chapter = parseInt(match[2], 10);
       verseStart = match[3] ? parseInt(match[3], 10) : void 0;
-      verseEnd = match[4] ? parseInt(match[4], 10) : void 0;
+      if (match[5]) {
+        chapterEnd = parseInt(match[4], 10);
+        verseEnd = parseInt(match[5], 10);
+      } else {
+        verseEnd = match[4] ? parseInt(match[4], 10) : void 0;
+      }
     } else {
-      if (!lastBookName)
+      if (!lastBookName) {
+        lastMatchEndIndex = match.index + match[0].length;
         continue;
+      }
       bookName = lastBookName;
-      chapter = parseInt(match[5], 10);
-      verseStart = parseInt(match[6], 10);
-      verseEnd = match[7] ? parseInt(match[7], 10) : void 0;
+      chapter = parseInt(match[6], 10);
+      verseStart = parseInt(match[7], 10);
+      if (match[9]) {
+        chapterEnd = parseInt(match[8], 10);
+        verseEnd = parseInt(match[9], 10);
+      } else {
+        verseEnd = match[8] ? parseInt(match[8], 10) : void 0;
+      }
     }
     const beforeMatch = text.substring(0, match.index);
     const afterMatch = text.substring(match.index + match[0].length);
@@ -355,11 +375,13 @@ function findAllReferences(text) {
       book: bookName,
       chapter,
       verseStart,
+      chapterEnd,
       verseEnd,
       rawText,
       startIndex,
       endIndex
     });
+    lastMatchEndIndex = endIndex;
   }
   return references;
 }
@@ -400,7 +422,9 @@ function generateLogosUrl(ref, translation) {
     let refString2 = `${book.osis}${ref.chapter}`;
     if (ref.verseStart !== void 0) {
       refString2 += `.${ref.verseStart}`;
-      if (ref.verseEnd !== void 0 && ref.verseEnd !== ref.verseStart) {
+      if (ref.chapterEnd !== void 0) {
+        refString2 += `-${ref.chapterEnd}.${ref.verseEnd}`;
+      } else if (ref.verseEnd !== void 0 && ref.verseEnd !== ref.verseStart) {
         refString2 += `-${ref.verseEnd}`;
       }
     }
@@ -414,7 +438,9 @@ function generateLogosUrl(ref, translation) {
   }
   if (ref.verseStart !== void 0) {
     refString += `.${ref.verseStart}`;
-    if (ref.verseEnd !== void 0 && ref.verseEnd !== ref.verseStart) {
+    if (ref.chapterEnd !== void 0) {
+      refString += `-${ref.chapterEnd}.${ref.verseEnd}`;
+    } else if (ref.verseEnd !== void 0 && ref.verseEnd !== ref.verseStart) {
       refString += `-${ref.verseEnd}`;
     }
   }

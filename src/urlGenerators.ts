@@ -20,7 +20,11 @@ export function generateLogosUrl(ref: BibleReference, translation: Translation):
         let refString = `${book.osis}${ref.chapter}`;
         if (ref.verseStart !== undefined) {
             refString += `.${ref.verseStart}`;
-            if (ref.verseEnd !== undefined && ref.verseEnd !== ref.verseStart) {
+
+            if (ref.chapterEnd !== undefined) {
+                // Cross-chapter range: Ge3.35-4.1
+                refString += `-${ref.chapterEnd}.${ref.verseEnd}`;
+            } else if (ref.verseEnd !== undefined && ref.verseEnd !== ref.verseStart) {
                 refString += `-${ref.verseEnd}`;
             }
         }
@@ -40,7 +44,11 @@ export function generateLogosUrl(ref: BibleReference, translation: Translation):
 
     if (ref.verseStart !== undefined) {
         refString += `.${ref.verseStart}`;
-        if (ref.verseEnd !== undefined && ref.verseEnd !== ref.verseStart) {
+
+        if (ref.chapterEnd !== undefined) {
+            // Cross-chapter range: BibleESV.Ge3.35-4.1
+            refString += `-${ref.chapterEnd}.${ref.verseEnd}`;
+        } else if (ref.verseEnd !== undefined && ref.verseEnd !== ref.verseStart) {
             refString += `-${ref.verseEnd}`;
         }
     }
@@ -62,6 +70,8 @@ export function generateBollsUrl(ref: BibleReference, translation: Translation):
         return '';
     }
 
+    // Bolls typical format doesn't natively support cross-chapter ranges in one URL.
+    // We will link to the start of the range.
     let url = `https://bolls.life/${config.bollsCode}/${book.bollsId}/${ref.chapter}/`;
 
     // Add verse anchor if specific verse is referenced
