@@ -74,7 +74,7 @@ export default class ScriptureLinkerPlugin extends Plugin {
         if (view) {
             this.scanEditor(view.editor, false);
         } else {
-            new Notice('No active markdown file');
+            new Notice('No active Markdown file');
         }
     }
 
@@ -99,7 +99,7 @@ export default class ScriptureLinkerPlugin extends Plugin {
         const references = findAllReferences(text);
 
         if (references.length === 0) {
-            new Notice('No Bible references found');
+            new Notice('No bible references found');
             return;
         }
 

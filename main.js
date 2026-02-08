@@ -568,7 +568,7 @@ var ScriptureLinkerPlugin = class extends import_obsidian2.Plugin {
     if (view) {
       this.scanEditor(view.editor, false);
     } else {
-      new import_obsidian2.Notice("No active markdown file");
+      new import_obsidian2.Notice("No active Markdown file");
     }
   }
   /**
@@ -589,7 +589,7 @@ var ScriptureLinkerPlugin = class extends import_obsidian2.Plugin {
     }
     const references = findAllReferences(text);
     if (references.length === 0) {
-      new import_obsidian2.Notice("No Bible references found");
+      new import_obsidian2.Notice("No bible references found");
       return;
     }
     const sortedRefs = [...references].sort((a, b) => b.startIndex - a.startIndex);
