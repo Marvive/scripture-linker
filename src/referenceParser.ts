@@ -12,12 +12,11 @@ function getReferenceRegex(): RegExp {
 
     const bookPattern = buildBookPattern();
     // Full ref: Book 3:35 or Book 3:35-4:1
-    // Use negative lookbehind (?<![a-zA-Z0-9]) to prevent matching inside words like "test"
-    // We don't include parentheses in the match for full references to keep links clean
-    const fullRefPattern = `(?<![a-zA-Z0-9])(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-–—](\\d{1,3})(?:[:.](\\d{1,3}))?)?)?`;
-    // Shorthand: 3:35 or 3:35-4:1
-    // Shorthand allows optional parentheses which are commonly used in texts
-    const shorthandRefPattern = `(?<![a-zA-Z0-9])(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-–—](\\d{1,3})(?:[:.](\\d{1,3}))?)?(?:\\))?`;
+    // Use negative lookbehind (?<![a-zA-Z0-9/.=]) to prevent matching inside words or URLs
+    // Optional parentheses allow capturing (John 3:16)
+    const fullRefPattern = `(?<![a-zA-Z0-9/.=])(?:\\()?(${bookPattern})\\.?\\s*(\\d{1,3})(?:[:.](\\d{1,3})(?:[-–—](\\d{1,3})(?:[:.](\\d{1,3}))?)?)?(?:\\))?`;
+    // Shorthand: 3:16 or (3:16)
+    const shorthandRefPattern = `(?<![a-zA-Z0-9/.=])(?:\\()?(\\d{1,3}):(\\d{1,3})(?:[-–—](\\d{1,3})(?:[:.](\\d{1,3}))?)?(?:\\))?`;
 
     cachedReferenceRegex = new RegExp(`${fullRefPattern}|${shorthandRefPattern}`, 'gi');
     return new RegExp(cachedReferenceRegex.source, cachedReferenceRegex.flags);

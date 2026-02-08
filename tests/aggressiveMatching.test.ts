@@ -27,15 +27,15 @@ describe('Aggressive Matching Preventions', () => {
         const refs = findAllReferences('Read (Ge 1:1)');
         expect(refs).toHaveLength(1);
         expect(refs[0].book).toBe('Genesis');
-        // Parentheses are NOT part of the match for full references
-        expect(refs[0].rawText).toBe('Ge 1:1');
+        // Parentheses are now part of the match for full references
+        expect(refs[0].rawText).toBe('(Ge 1:1)');
     });
 
-    it('should match (est 3:1-8) without including leading parenthesis', () => {
+    it('should match (est 3:1-8) exactly as provided', () => {
         const refs = findAllReferences('This is (est 3:1-8)');
         expect(refs).toHaveLength(1);
         expect(refs[0].book).toBe('Esther');
-        expect(refs[0].rawText).toBe('est 3:1-8');
+        expect(refs[0].rawText).toBe('(est 3:1-8)');
     });
 
     it('should match shorthand WITH parentheses included', () => {
