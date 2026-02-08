@@ -67,7 +67,7 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
 
                         // If switching to Bolls and current translation isn't supported, 
                         // reset to a supported one (ESV)
-                        const currentTrans = this.plugin.settings.defaultTranslation as Translation;
+                        const currentTrans = this.plugin.settings.defaultTranslation;
                         const isBolls = value === 'bolls' || value === 'both';
                         if (isBolls && !TRANSLATION_CONFIG[currentTrans].supportsBolls) {
                             this.plugin.settings.defaultTranslation = 'ESV';
@@ -83,15 +83,11 @@ export class ScriptureLinkerSettingTab extends PluginSettingTab {
         containerEl.createEl('br');
 
         // Sponsor button
-        const sponsorDiv = containerEl.createDiv();
-        sponsorDiv.style.marginBottom = '10px';
-        const sponsorBtn = sponsorDiv.createEl('button');
-        sponsorBtn.style.display = 'flex';
-        sponsorBtn.style.alignItems = 'center';
-        sponsorBtn.style.gap = '5px';
+        const sponsorDiv = containerEl.createDiv({ cls: 'scripture-linker-sponsor-div' });
+        const sponsorBtn = sponsorDiv.createEl('button', { cls: 'scripture-linker-sponsor-btn' });
         setIcon(sponsorBtn, 'heart');
         const heartIcon = sponsorBtn.querySelector('svg');
-        if (heartIcon) heartIcon.style.color = '#db61a2';
+        if (heartIcon) heartIcon.addClass('scripture-linker-heart-icon');
         sponsorBtn.createSpan({ text: 'Sponsor' });
         sponsorBtn.onclick = () => window.open('https://github.com/sponsors/Marvive', '_blank');
 

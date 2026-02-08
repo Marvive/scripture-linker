@@ -9,3 +9,18 @@
 	margin-top: 1.5em;
 	margin-bottom: 0.5em;
 }
+
+/* Sponsor button styling */
+.scripture-linker-sponsor-div {
+	margin-bottom: 10px;
+}
+
+.scripture-linker-sponsor-btn {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.scripture-linker-heart-icon {
+	color: #db61a2;
+}

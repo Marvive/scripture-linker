@@ -134,16 +134,12 @@ var ScriptureLinkerSettingTab = class extends import_obsidian.PluginSettingTab {
       });
     });
     containerEl.createEl("br");
-    const sponsorDiv = containerEl.createDiv();
-    sponsorDiv.style.marginBottom = "10px";
-    const sponsorBtn = sponsorDiv.createEl("button");
-    sponsorBtn.style.display = "flex";
-    sponsorBtn.style.alignItems = "center";
-    sponsorBtn.style.gap = "5px";
+    const sponsorDiv = containerEl.createDiv({ cls: "scripture-linker-sponsor-div" });
+    const sponsorBtn = sponsorDiv.createEl("button", { cls: "scripture-linker-sponsor-btn" });
     (0, import_obsidian.setIcon)(sponsorBtn, "heart");
     const heartIcon = sponsorBtn.querySelector("svg");
     if (heartIcon)
-      heartIcon.style.color = "#db61a2";
+      heartIcon.addClass("scripture-linker-heart-icon");
     sponsorBtn.createSpan({ text: "Sponsor" });
     sponsorBtn.onclick = () => window.open("https://github.com/sponsors/Marvive", "_blank");
     const issuesDiv = containerEl.createDiv();
@@ -582,15 +578,12 @@ var ScriptureLinkerPlugin = class extends import_obsidian2.Plugin {
    */
   scanEditor(editor, selectionOnly) {
     let text;
-    let startOffset = 0;
     if (selectionOnly) {
       text = editor.getSelection();
       if (!text) {
         new import_obsidian2.Notice("No text selected");
         return;
       }
-      const from = editor.getCursor("from");
-      startOffset = editor.posToOffset(from);
     } else {
       text = editor.getValue();
     }

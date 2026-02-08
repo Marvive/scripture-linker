@@ -85,7 +85,6 @@ export default class ScriptureLinkerPlugin extends Plugin {
      */
     private scanEditor(editor: Editor, selectionOnly: boolean) {
         let text: string;
-        let startOffset = 0;
 
         if (selectionOnly) {
             text = editor.getSelection();
@@ -93,8 +92,6 @@ export default class ScriptureLinkerPlugin extends Plugin {
                 new Notice('No text selected');
                 return;
             }
-            const from = editor.getCursor('from');
-            startOffset = editor.posToOffset(from);
         } else {
             text = editor.getValue();
         }
