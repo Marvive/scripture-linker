@@ -23,13 +23,24 @@ describe('Aggressive Matching Preventions', () => {
         expect(refs[0].book).toBe('Genesis');
     });
 
-    it('should match references at the beginning of a line', () => {
-        const refs = findAllReferences('John 3:16');
+    it('should match references enclosed in parentheses', () => {
+        const refs = findAllReferences('Read (Ge 1:1)');
         expect(refs).toHaveLength(1);
+        expect(refs[0].book).toBe('Genesis');
+        // Parentheses are NOT part of the match for full references
+        expect(refs[0].rawText).toBe('Ge 1:1');
     });
 
-    it('should match references with periods after abbreviations', () => {
-        const refs = findAllReferences('Gen. 1:1');
+    it('should match (est 3:1-8) without including leading parenthesis', () => {
+        const refs = findAllReferences('This is (est 3:1-8)');
         expect(refs).toHaveLength(1);
+        expect(refs[0].book).toBe('Esther');
+        expect(refs[0].rawText).toBe('est 3:1-8');
+    });
+
+    it('should match shorthand WITH parentheses included', () => {
+        const refs = findAllReferences('Gen 1:1 and (1:2)');
+        expect(refs).toHaveLength(2);
+        expect(refs[1].rawText).toBe('(1:2)');
     });
 });
